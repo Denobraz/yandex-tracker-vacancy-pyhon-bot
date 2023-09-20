@@ -1,0 +1,4 @@
+pyTelegramBotAPI==4.13.0
+python-dotenv==0.19.2
+yandex_tracker_client==2.6
+validators==0.22.0
