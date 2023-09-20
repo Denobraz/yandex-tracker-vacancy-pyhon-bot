@@ -15,6 +15,7 @@ COPY dto.py .
 COPY messages.py .
 COPY services.py .
 COPY bot.py .
+COPY utils.py .
 COPY .env .
 
 # Запуск скрипта

@@ -4,31 +4,17 @@ from telebot import types
 from dotenv import load_dotenv
 from dto import Vacancy
 from dto import Client
-import validators
-from validators import ValidationError
 from services import ClientService
 from messages import messages
+from utils import is_string_an_url, normalize_url
 
 load_dotenv()
 
 bot = telebot.TeleBot(os.getenv("TELEGRAM_BOT_TOKEN"))
 clientService = ClientService()
 
-def normalize_url(url_string: str) -> str:
-    if not url_string.startswith(("http://", "https://")):
-        url_string = "https://" + url_string
-    return url_string
-
-def is_string_an_url(url_string: str) -> bool:
-    result = validators.url(url_string)
-
-    if isinstance(result, ValidationError):
-        return False
-
-    return result
-
 def generate_keyboard():
-    keyboard = types.ReplyKeyboardMarkup()
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     btn1 = types.KeyboardButton(messages.get('add_vacancy_button'))
     btn2 = types.KeyboardButton(messages.get('generate_report_button'))
     keyboard.add(btn1, btn2)
@@ -71,11 +57,28 @@ def process_task_link(message):
         bot.send_message(message.chat.id, messages.get('something_went_wrong_message'))
 
 def generate_report(message):
-    client = clientService.findByTelegramId(telegram_id=message.from_user.id)
-    if not isinstance(client, Client):
-        bot.send_message(message.chat.id, messages.get('you_not_our_client_message'))
-        return
-    bot.send_message(message.chat.id, 'ла-ла-ла')
+    try:
+        client = clientService.findByTelegramId(telegram_id=message.from_user.id)
+        if not isinstance(client, Client):
+            bot.send_message(message.chat.id, messages.get('you_not_our_client_message'))
+            return
+        if client.report_link != None and is_string_an_url(client.report_link):
+            keyboard = types.InlineKeyboardMarkup()
+            btn1 = types.InlineKeyboardButton(text=messages.get('report_link_button'), url=client.report_link)
+            keyboard.add(btn1)
+            bot.send_message(message.chat.id, messages.get('report_is_ready_message'), reply_markup=keyboard)
+            return
+        else:
+            reply = bot.send_message(message.chat.id, messages.get('report_is_in_generating_message'))
+            file = clientService.generateReportVacanciesForClient(client=client)
+            bot.delete_message(message.chat.id, reply.id)
+            bot.send_document(message.chat.id, document=file, caption=messages.get('report_is_ready_message'))
+            return
+
+            bot.send_message(message.chat.id, messages.get('report_is_not_ready_message'))
+    except Exception as e:
+        bot.send_message(message.chat.id, messages.get('something_went_wrong_message'))
+        
 
 bot.enable_save_next_step_handlers(delay=2)
 bot.load_next_step_handlers()

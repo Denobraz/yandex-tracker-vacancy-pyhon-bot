@@ -6,6 +6,10 @@ messages = {
     "select_action_message" : "Выбирите действие",
     "you_not_our_client_message" : "Вы не являетесь нашим клиентом",
     "vacancy_link_is_not_valid_message" : "Кажется ваша ссылка не валидна, попробуйте еще раз!",
-    "vacancy_in_processing_message" : "'Мы обработаем вашу задачу в скором времени!'",
+    "vacancy_in_processing_message" : "Мы обработаем вашу задачу в скором времени!",
     "something_went_wrong_message" : "Что-то пошло не так!",
+    "report_is_not_ready_message" : "Отчет еще готов, попробуйте позже",
+    "report_is_ready_message" : "Вот ваш отчет:",
+    "report_link_button" : "Перейти в отчету",
+    "report_is_in_generating_message" : "Идет генерация отчета..."
 }
