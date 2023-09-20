@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Копирование скрипта и файлов .env
 COPY dto.py .
+COPY messages.py .
 COPY services.py .
 COPY bot.py .
 COPY .env .

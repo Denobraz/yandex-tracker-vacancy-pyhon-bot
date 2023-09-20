@@ -7,7 +7,7 @@ from dto import Client
 import validators
 from validators import ValidationError
 from services import ClientService
-import messages
+from messages import messages
 
 load_dotenv()
 
